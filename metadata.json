@@ -1,0 +1,6 @@
+{
+  "name": "Darya Stream - Live Persian & Afghan TV",
+  "description": "Watch live Persian and Afghan TV channels online with HD streaming, interactive TV guide, categories, custom player, and individual channel pages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
