@@ -758,37 +758,37 @@ export function VideoPlayer({
 
       {/* Under-Player Channel Headline Bar */}
       {showChannelInfo && (
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-lg text-slate-700 dark:text-cyan-400 border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-base sm:text-lg text-slate-700 dark:text-cyan-400 border border-slate-200 dark:border-slate-700 shadow-xs">
               {channel.flag}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">{channel.name}</h1>
-                <Badge variant={channel.country === 'Iran' || channel.country === 'persian' ? 'persian' : channel.country === 'Afghanistan' || channel.country === 'afghan' ? 'afghan' : 'secondary'}>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h1 className="text-base sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">{channel.name}</h1>
+                <Badge variant={channel.country === 'Iran' || channel.country === 'persian' ? 'persian' : channel.country === 'Afghanistan' || channel.country === 'afghan' ? 'afghan' : 'secondary'} className="text-[10px] sm:text-xs">
                   {channel.countryName}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5" dir="rtl">
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate" dir="rtl">
                 {channel.nameFa} • {channel.categoryNameFa}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-center">
+          <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
             <Button
               variant="outline"
               size="sm"
               onClick={handleShare}
-              className="text-xs gap-1.5"
+              className="text-xs gap-1.5 h-8 sm:h-9"
             >
               <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
               {copiedLink ? 'Link Copied!' : 'Share TV'}
             </Button>
 
             <Link href={`/multiview?add=${channel.id}`}>
-              <Button variant="secondary" size="sm" className="text-xs gap-1.5">
+              <Button variant="secondary" size="sm" className="text-xs gap-1.5 h-8 sm:h-9">
                 <Layers className="w-3.5 h-3.5" />
                 Multi-View
               </Button>

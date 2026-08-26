@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
   Info,
@@ -8,7 +8,7 @@ import {
   Layers,
   ArrowLeft,
 } from 'lucide-react';
-import { CHANNELS, getChannelBySlug, getRelatedChannels } from '@/lib/channels-data';
+import { CHANNELS, getChannelBySlug, findChannelFuzzy, getRelatedChannels } from '@/lib/channels-data';
 import { VideoPlayer } from '@/components/video-player';
 import { ChannelChat } from '@/components/channel-chat';
 import { SatelliteInfo } from '@/components/satellite-info';
@@ -28,7 +28,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const channel = getChannelBySlug(slug);
+  let channel = getChannelBySlug(slug);
+  if (!channel) {
+    channel = findChannelFuzzy(slug);
+  }
 
   if (!channel) {
     return {
@@ -77,9 +80,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LiveTvDetailPage({ params }: Props) {
   const { slug } = await params;
-  const channel = getChannelBySlug(slug);
+  let channel = getChannelBySlug(slug);
 
   if (!channel) {
+    const fuzzyMatch = findChannelFuzzy(slug);
+    if (fuzzyMatch && fuzzyMatch.slug !== slug) {
+      redirect(`/live-tv/${fuzzyMatch.slug}`);
+    }
     notFound();
   }
 
@@ -109,7 +116,7 @@ export default async function LiveTvDetailPage({ params }: Props) {
   const countryDisplay = isIran ? 'Persian (Iran) • فارسی' : isAfghan ? 'Afghanistan • افغانی' : 'International • بین‌المللی';
 
   return (
-    <div className="min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 animate-in fade-in">
+    <div className="min-w-0 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 animate-in fade-in">
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"

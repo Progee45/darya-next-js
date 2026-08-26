@@ -23,7 +23,7 @@ const RAW_CHANNELS = [
     category: 'Sports',
     logoUrl: '/logos/irib3.png',
     bannerUrl: '',
-    bannerImage: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&auto=format&fit=crop&q=80',
+    bannerImage: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&auto=format&fit=crop&q=80',
     description: 'Watch IRIB 3 TV Live sports streaming. Free HD broadcast of live football, volleyball, and top Iranian athletics.',
     descriptionFa: 'پخش زنده شبکه سه سیما ایران با کیفیت بالا و پوشش مسابقات ورزشی.',
     rating: 4.8,
@@ -726,7 +726,115 @@ export const COUNTRIES = [
 ] as const;
 
 export function getChannelBySlug(slug: string): Channel | undefined {
-  return CHANNELS.find((c) => c.slug === slug || c.id === slug);
+  if (!slug) return undefined;
+  const cleanSlug = slug.toLowerCase().trim();
+  return CHANNELS.find((c) => c.slug.toLowerCase() === cleanSlug || c.id.toLowerCase() === cleanSlug);
+}
+
+// Common aliases mapping for clever redirects
+const CHANNEL_ALIASES: Record<string, string> = {
+  // Iran channels
+  'irib3': 'irib3-tv-live',
+  'irib-3': 'irib3-tv-live',
+  'tv3': 'irib3-tv-live',
+  'shabake3': 'irib3-tv-live',
+  'shabake-3': 'irib3-tv-live',
+  'varzish': 'varzish-tv-iran-live',
+  'varzesh': 'varzish-tv-iran-live',
+  'varzishtv': 'varzish-tv-iran-live',
+  'varzeshtv': 'varzish-tv-iran-live',
+  'iranintl': 'iran-international-live',
+  'iran-intl': 'iran-international-live',
+  'iraninternational': 'iran-international-live',
+  'iran-international': 'iran-international-live',
+  'ifilm': 'ifilm-tv-live',
+  'ifilmtv': 'ifilm-tv-live',
+  'i-film': 'ifilm-tv-live',
+  'voa': 'voa-farsi-live',
+  'voafarsi': 'voa-farsi-live',
+  'voa-farsi': 'voa-farsi-live',
+  'voiceofamerica': 'voa-farsi-live',
+  'bbc': 'bbc-persian-tv-live',
+  'bbcpersian': 'bbc-persian-tv-live',
+  'bbc-persian': 'bbc-persian-tv-live',
+  'bbc-farsi': 'bbc-persian-tv-live',
+  'aryaee': 'iran-aryaee-tv-live',
+  'iranaryaee': 'iran-aryaee-tv-live',
+  'iran-aryaee': 'iran-aryaee-tv-live',
+
+  // Afghan channels
+  'tolo': 'tolo-tv-live',
+  'tolotv': 'tolo-tv-live',
+  'tolo-tv': 'tolo-tv-live',
+  'tolonews': 'tolonews-tv-live',
+  'tolo-news': 'tolonews-tv-live',
+  'afintl': 'afghanistan-international-live',
+  'afghanistan-intl': 'afghanistan-international-live',
+  'afghanistaninternational': 'afghanistan-international-live',
+  'afghanistan-international': 'afghanistan-international-live',
+  '1tv': 'yak-tv-kabul-live',
+  'yaktv': 'yak-tv-kabul-live',
+  'yak-tv': 'yak-tv-kabul-live',
+  '1tvkabul': 'yak-tv-kabul-live',
+  'amu': 'amu-tv-live',
+  'amutv': 'amu-tv-live',
+  'amu-tv': 'amu-tv-live',
+  'lemar': 'lemar-tv-live',
+  'lemartv': 'lemar-tv-live',
+  'lemar-tv': 'lemar-tv-live',
+  'eslah': 'eslah-tv-live',
+  'eslahtv': 'eslah-tv-live',
+  'eslah-tv': 'eslah-tv-live',
+  'tamadon': 'tamadon-tv-live',
+  'tamadontv': 'tamadon-tv-live',
+  'tamadon-tv': 'tamadon-tv-live',
+  'rta': 'rta-mili-tv-live',
+  'rtamili': 'rta-mili-tv-live',
+  'rta-mili': 'rta-mili-tv-live',
+  'ariana': 'ariana-tv-live',
+  'arianatv': 'ariana-tv-live',
+  'ariana-tv': 'ariana-tv-live',
+  'arezo': 'arezo-tv-live',
+  'arezotv': 'arezo-tv-live',
+  'arezo-tv': 'arezo-tv-live',
+};
+
+export function findChannelFuzzy(query: string): Channel | undefined {
+  if (!query) return undefined;
+  const clean = query.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+
+  // 1. Direct alias match
+  if (CHANNEL_ALIASES[query.toLowerCase().trim()]) {
+    const slug = CHANNEL_ALIASES[query.toLowerCase().trim()];
+    const ch = CHANNELS.find((c) => c.slug === slug || c.id === slug);
+    if (ch) return ch;
+  }
+
+  if (CHANNEL_ALIASES[clean]) {
+    const slug = CHANNEL_ALIASES[clean];
+    const ch = CHANNELS.find((c) => c.slug === slug || c.id === slug);
+    if (ch) return ch;
+  }
+
+  // 2. Exact or partial slug match
+  const matchSlug = CHANNELS.find(
+    (c) =>
+      c.slug.toLowerCase() === query.toLowerCase().trim() ||
+      c.id.toLowerCase() === query.toLowerCase().trim() ||
+      c.slug.replace(/[^a-z0-9]/g, '').includes(clean) ||
+      clean.includes(c.slug.replace(/[^a-z0-9]/g, ''))
+  );
+  if (matchSlug) return matchSlug;
+
+  // 3. Name or keywords match
+  const matchName = CHANNELS.find((c) => {
+    const nameClean = c.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const hasWord = clean.length >= 3 && (nameClean.includes(clean) || clean.includes(nameClean));
+    const hasTag = c.tags?.some((t) => t.toLowerCase().replace(/[^a-z0-9]/g, '').includes(clean));
+    return hasWord || hasTag;
+  });
+
+  return matchName;
 }
 
 export function getFeaturedChannels(): Channel[] {
