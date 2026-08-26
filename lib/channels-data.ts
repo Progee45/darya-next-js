@@ -26,7 +26,7 @@ const RAW_CHANNELS = [
     bannerImage: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&auto=format&fit=crop&q=80',
     description: 'Watch IRIB 3 TV Live sports streaming. Free HD broadcast of live football, volleyball, and top Iranian athletics.',
     descriptionFa: 'پخش زنده شبکه سه سیما ایران با کیفیت بالا و پوشش مسابقات ورزشی.',
-    rating: 4.9,
+    rating: 4.8,
     viewCount: '3.8M',
     isHot: true,
     isHD: true,
